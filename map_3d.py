@@ -1,57 +1,43 @@
-import numpy as np
-
-
 class Map_3D:
-    map = {}
+    lists = []
 
     def __init__(self, size: int) -> None:
-        for x in range(size):
-            for y in range(size):
-                self.map.update({(x, y): None})
+        for _ in range(size):
+            row = []
+            for _ in range(size):
+                row.append(None)
+            self.lists.append(row)
 
 
-    def set(self, coordinates: tuple, value: float) -> None:
-        size = int(np.sqrt(len(self.map)))
-        if (coordinates[0] in range(0, size) and coordinates[1] in range(0, size)):
-            self.map[coordinates] = value
-        else:
-            raise IndexError
+    def set(self, x: int, y: int, value: float) -> None:
+        if (y in range(len(self.lists))):
+            if (x in range(len(self.lists[y]))):
+                self.lists[y][x] = value
+                return
+        raise IndexError
 
-    def get(self, coordinates: tuple) -> float:
-        size = int(np.sqrt(len(self.map)))
-        if (coordinates[0] in range(0, size) and coordinates[1] in range(0, size)):
-            return self.map[coordinates]
-        else:
-            raise IndexError
+    def get(self, x: int, y: int) -> float:
+        if (y in range(len(self.lists))):
+            if (x in range(len(self.lists[y]))):
+                return self.lists[y][x]
+        raise IndexError
 
     def get_size(self) -> int:
-        return int(np.sqrt(len(self.map)))
+        return len(self.lists)
 
 
     def trim(self, goal_size) -> None:
-        new = {}
-        size = int(np.sqrt(len(self.map)))
-        if (goal_size < size):
-            delta = (size-goal_size) // 2
-            for x in range(delta, delta+goal_size):
-                for y in range(delta, delta+goal_size):
-                    new.update({(x-delta, y-delta): self.map[(x, y)]})
-
-            self.map = new
+        if (goal_size < len(self.lists)):
+            delta = (len(self.lists)-goal_size) // 2
+            self.lists = self.lists[delta:delta+goal_size]
+            for index in range(len(self.lists)):
+                self.lists[index] = self.lists[index][delta:delta+goal_size]
 
 
     def show(self) -> None:
-        size = int(np.sqrt(len(self.map)))
-        for y in range(size):
-            for x in range(size):
-                print(f"({x}, {y}) = {self.map[(x, y)]}")
+        for y in len(self.lists):
+            for x in len(self.lists[y]):
+                print(f"({x}, {y}) = {self.lists[y][x]}")
 
     def export(self) -> list:
-        data = []
-        size = int(np.sqrt(len(self.map)))
-        for y in range(size):
-            row = []
-            for x in range(size):
-                row.append(self.map[(x, y)])
-            data.append(row)
-        return data
+        return self.lists
